@@ -4,7 +4,7 @@ Ein kleines Online-Tool zum Wichteln mit der Familie – ganz ohne Server, Anmel
 
 ## So funktioniert's
 
-1. Seite öffnen, alle Namen eintragen (optional: Paare, die sich nicht ziehen sollen, Budget, Datum der Bescherung).
+1. Seite öffnen, alle Namen eintragen (optional: Paare, die sich nicht ziehen sollen, feste Paare wie „Oma -> Tim“, Budget, Datum der Bescherung).
 2. **Auslosen** klicken.
 3. Jede Person bekommt ihren **eigenen geheimen Link** (per „Link kopieren“ oder direkt per WhatsApp).
 4. Wer den Link öffnet, muss schwören, dass er es wirklich ist 🤞, das Päckchen ein paar Mal schütteln – und sieht dann, wen er beschenkt. Mit Konfetti. 🎉
@@ -56,3 +56,17 @@ Im Repo unter **Settings → Pages** als Quelle den Branch `main` und den Ordner
 Danach ist die Seite unter `https://<benutzername>.github.io/wichteln/` erreichbar.
 
 Lokal testen: einfach `index.html` im Browser öffnen.
+
+## Tests
+
+Die Tests stellen sicher, dass die Teilnehmer-Links und der Admin-Bereich immer genau dieselbe Auslosung zeigen – auch mit festen Paaren, Ausschlüssen und nach „Nochmal auslosen“.
+
+```bash
+npm install
+npx playwright install chromium   # nur für den Browser-Test
+npm test
+```
+
+Auf GitHub laufen sie automatisch bei jedem Push und Pull Request (Reiter **Actions**).
+
+Jede Auslosung hat einen **Auslosungs-Code**, der auf jedem Zettel und im Admin-Bereich steht. Passen die Codes nicht zusammen, stammt der Link aus einer älteren Auslosung.

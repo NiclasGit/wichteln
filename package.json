@@ -1,0 +1,11 @@
+{
+  "name": "wichteln",
+  "private": true,
+  "description": "Familien-Wichteln im Browser",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}
