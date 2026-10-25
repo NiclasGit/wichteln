@@ -186,22 +186,6 @@ button.link { background: none; border: none; color: var(--green); text-decorati
   place-items: center;
   font-size: 9rem;
 }
-.meme-text {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  margin: 0;
-  font-family: Impact, "Anton", "Arial Black", sans-serif;
-  font-size: clamp(1.1rem, 5vw, 1.5rem);
-  line-height: 1.15;
-  text-transform: uppercase;
-  color: #fff;
-  -webkit-text-stroke: 1.5px #000;
-  paint-order: stroke fill;
-  text-shadow: 2px 2px 0 #000;
-}
-.meme-text.top { top: 12px; }
-.meme-text.bottom { bottom: 12px; }
 
 @media (max-width: 480px) {
   .card { padding: 20px; }

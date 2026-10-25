@@ -29,19 +29,20 @@ Das Passwort wird nirgends gespeichert. Vergisst du es, kann niemand die Auslosu
 - „Bist du's wirklich?“-Abfrage gegen versehentliches Spicken
 - Countdown bis zur Bescherung & Budget-Anzeige
 - Zufällige Wichtel-Tipps und ein persönlicher Wichtelname 🧝
-- Weihnachts-Memes zum Durchklicken 🦌
+- Weihnachts-GIFs zum Durchklicken 🦌
 
-## Eigene Memes einbauen
+## GIFs einbauen
 
-Bilder nach `assets/memes/` hochladen und in `app.js` in die Liste `OWN_MEMES` eintragen, z.B.:
+Die GIFs stehen in `app.js` in der Liste `MEMES` und werden genau in dieser Reihenfolge gezeigt („Nächstes GIF“ springt eins weiter, am Ende geht's von vorn los). Links, die nicht laden, werden übersprungen.
 
 ```js
-const OWN_MEMES = [
+const MEMES = [
+  "https://media.giphy.com/media/WmkqburJqXziM/giphy.gif",
   "assets/memes/opa-mit-muetze.jpg",
 ];
 ```
 
-Sie werden dann zufällig zwischen die eingebauten Memes gemischt. Neue Sprüche für die eingebauten Memes kommen in die Liste `MEMES`.
+Den Link zu einem GIPHY-GIF bekommst du so: die ID ist der Teil nach dem letzten Bindestrich in `giphy.com/gifs/...-WmkqburJqXziM` → `https://media.giphy.com/media/WmkqburJqXziM/giphy.gif`.
 
 ## Familienfoto einbauen
 
