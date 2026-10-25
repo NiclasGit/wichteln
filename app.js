@@ -21,6 +21,22 @@ const TIPS = [
 const ELF_FIRST = ["Zuckerstange", "Glitzer", "Lebkuchen", "Schneeflocke", "Zimtstern", "Glöckchen", "Tannenduft", "Punsch"];
 const ELF_LAST = ["von Nordpol", "Flinkfuß", "Wunderkeks", "Funkelnase", "Klingelbart", "Rentierflüsterer", "Schleifenzauber"];
 
+// Weihnachts-Memes: Emoji als „Bild“ + klassischer Text oben/unten
+const MEMES = [
+  "https://media.giphy.com/media/WmkqburJqXziM/giphy.gif",
+  "https://media.giphy.com/media/LBAv3HJDl2WwU/giphy.gif",
+  "https://media.giphy.com/media11EjiLDatd0syA/giphy.gif",
+  "https://media.giphy.com/media/2LbfRQVHs34V1Ru8Pt/giphy.gif",
+  "https://media.giphy.com/media/peLaXBwYXthPVQbBne/giphy.gif",
+  "https://media.giphy.com/media/KzKHlzSlfHZV44EdTy/giphy.gif",
+  "https://media.giphy.com/media/5dZYGvxrjfthsL9xdN/giphy.gif",
+];
+
+// Eigene Meme-Bilder: Dateien nach assets/memes/ legen und hier eintragen
+const OWN_MEMES = [
+  // "assets/memes/opa-mit-muetze.jpg",
+];
+
 // ---------- Kodierung der Links ----------
 
 function encode(obj) {
@@ -276,11 +292,13 @@ function initReveal(data) {
     renderCountdown(data.d);
     nextTip();
     $("r-elf").textContent = `Dein Wichtelname: ${pick(ELF_FIRST)} ${pick(ELF_LAST)} 🧝`;
+    nextMeme();
     show("result");
     confetti();
   });
 
   $("r-tip-next").addEventListener("click", nextTip);
+  $("meme-next").addEventListener("click", nextMeme);
 }
 
 function renderCountdown(date) {
@@ -303,6 +321,32 @@ function nextTip() {
   do { i = Math.floor(Math.random() * TIPS.length); } while (i === lastTip);
   lastTip = i;
   $("r-tip").textContent = TIPS[i];
+}
+
+let memeDeck = [];
+function nextMeme() {
+  // Gemischter Stapel, damit sich nichts wiederholt, bis alle durch sind
+  if (!memeDeck.length) memeDeck = shuffle([...MEMES, ...OWN_MEMES]);
+  const m = memeDeck.pop();
+  const img = $("meme-img");
+  const emoji = $("meme-emoji");
+  if (typeof m === "string") {
+    img.src = m;
+    img.classList.remove("hidden");
+    emoji.classList.add("hidden");
+    $("meme-top").textContent = "";
+    $("meme-bottom").textContent = "";
+  } else {
+    img.classList.add("hidden");
+    emoji.classList.remove("hidden");
+    emoji.textContent = m.e;
+    $("meme-top").textContent = m.top;
+    $("meme-bottom").textContent = m.bottom;
+  }
+  const card = $("meme");
+  card.classList.remove("flip");
+  void card.offsetWidth;
+  card.classList.add("flip");
 }
 
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
