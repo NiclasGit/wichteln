@@ -23,18 +23,36 @@ const ELF_LAST = ["von Nordpol", "Flinkfuß", "Wunderkeks", "Funkelnase", "Kling
 
 // Weihnachts-Memes: Emoji als „Bild“ + klassischer Text oben/unten
 const MEMES = [
+  { e: "🎅", top: "Wenn du siehst, wen du gezogen hast", bottom: "…und das Budget nur 30 € ist" },
+  { e: "🦌", top: "Rudolph, als jemand fragt", bottom: "„Warum ist deine Nase so rot?“ – Glühwein." },
+  { e: "🧦", top: "Ich: wünscht sich nichts", bottom: "Die Familie: 7 Paar Socken" },
+  { e: "🎁", top: "Das Geschenk", bottom: "Die Verpackung, die 3 Stunden gedauert hat" },
+  { e: "🍪", top: "Plätzchen für den Weihnachtsmann", bottom: "Papa um 23:58 Uhr" },
+  { e: "😐", top: "„Oh… Socken.“", bottom: "„Wie schön, danke!“" },
+  { e: "🎄", top: "Der Baum am 1. Advent", bottom: "Der Baum am 6. Januar 🍂" },
+  { e: "🛒", top: "Ich am 1. Dezember: „Dieses Jahr bin ich früh dran“", bottom: "Ich am 23. Dezember:" },
+  { e: "🕵️", top: "Wenn jemand fragt, wen du gezogen hast", bottom: "Ich weiß von nichts." },
+  { e: "🎶", top: "Last Christmas im Radio", bottom: "zum 47. Mal heute" },
+  { e: "🥔", top: "Kartoffelsalat mit Würstchen", bottom: "Das wahre Weihnachtswunder" },
+  { e: "🧝", top: "Der Wichtel, als er merkt", bottom: "dass Gutscheine auch Geschenke sind" },
+  { e: "📏", top: "Geschenk für 30 € gekauft", bottom: "Kassenzettel: 29,99 €. Präzision." },
+  { e: "🌟", top: "Die Lichterkette nach 11 Monaten im Keller", bottom: "Knoten-Level: unmöglich" },
+  { e: "😴", top: "Nach dem Weihnachtsessen", bottom: "Mein Bauch: Feierabend" },
+  { e: "🎩", top: "Opa beim Auspacken", bottom: "„Das Papier heben wir auf!“" },
+  { e: "⛄", top: "Weiße Weihnachten?", bottom: "Deutschland: 12 °C und Nieselregen" },
+  { e: "🤫", top: "Mein Gesicht, wenn mein Wichtel neben mir sitzt", bottom: "und ich nichts verrate" },
+];
+
+// Eigene Memes/GIFs: Bild-Links (z.B. https://media.giphy.com/media/<ID>/giphy.gif)
+// oder Dateien aus assets/memes/. Kaputte Links werden automatisch übersprungen.
+const OWN_MEMES = [
   "https://media.giphy.com/media/WmkqburJqXziM/giphy.gif",
   "https://media.giphy.com/media/LBAv3HJDl2WwU/giphy.gif",
-  "https://media.giphy.com/media11EjiLDatd0syA/giphy.gif",
+  "https://media.giphy.com/media/11EjiLDatd0syA/giphy.gif",
   "https://media.giphy.com/media/2LbfRQVHs34V1Ru8Pt/giphy.gif",
   "https://media.giphy.com/media/peLaXBwYXthPVQbBne/giphy.gif",
   "https://media.giphy.com/media/KzKHlzSlfHZV44EdTy/giphy.gif",
   "https://media.giphy.com/media/5dZYGvxrjfthsL9xdN/giphy.gif",
-];
-
-// Eigene Meme-Bilder: Dateien nach assets/memes/ legen und hier eintragen
-const OWN_MEMES = [
-  // "assets/memes/opa-mit-muetze.jpg",
 ];
 
 // ---------- Kodierung der Links ----------
@@ -324,19 +342,27 @@ function nextTip() {
 }
 
 let memeDeck = [];
+const brokenMemes = new Set();
+
 function nextMeme() {
   // Gemischter Stapel, damit sich nichts wiederholt, bis alle durch sind
-  if (!memeDeck.length) memeDeck = shuffle([...MEMES, ...OWN_MEMES]);
+  if (!memeDeck.length) memeDeck = shuffle([...MEMES, ...OWN_MEMES.filter((m) => !brokenMemes.has(m))]);
   const m = memeDeck.pop();
   const img = $("meme-img");
   const emoji = $("meme-emoji");
   if (typeof m === "string") {
+    // Platzhalter, bis das GIF geladen ist
+    emoji.textContent = "⏳";
+    emoji.classList.remove("hidden");
+    img.classList.add("hidden");
+    img.onload = () => { emoji.classList.add("hidden"); img.classList.remove("hidden"); };
+    img.onerror = () => { brokenMemes.add(m); nextMeme(); };
     img.src = m;
-    img.classList.remove("hidden");
-    emoji.classList.add("hidden");
     $("meme-top").textContent = "";
     $("meme-bottom").textContent = "";
   } else {
+    img.onload = img.onerror = null;
+    img.removeAttribute("src");
     img.classList.add("hidden");
     emoji.classList.remove("hidden");
     emoji.textContent = m.e;
