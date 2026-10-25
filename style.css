@@ -242,3 +242,5 @@ button.link { background: none; border: none; color: var(--green); text-decorati
   transition: filter 0.2s;
 }
 .pairs button.secret.shown { filter: none; background: none; }
+
+.draw-id { font-size: 0.8rem; margin-top: 14px; }

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Familien-Wichteln 🎁</title>
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
 </head>
 <body>
@@ -52,6 +52,7 @@
 
       <div id="results" class="hidden">
         <h2>Die geheimen Links</h2>
+        <p class="sub">Auslosungs-Code: <strong id="draw-id"></strong> – steht auch auf jedem Zettel und im Admin-Bereich. Nach „Nochmal auslosen“ gibt's einen neuen Code und die alten Links gehören nicht mehr dazu!</p>
         <p class="sub">Schick jedem <strong>nur seinen eigenen</strong> Link. Nicht selbst draufklicken – sonst ist die Überraschung weg! 🙈</p>
         <ul id="links" class="pairs"></ul>
 
@@ -120,6 +121,7 @@
           <img id="meme-img" class="hidden" alt="Weihnachts-Meme" referrerpolicy="no-referrer">
           <div id="meme-emoji" class="meme-emoji"></div>
         </figure>
+        <p class="sub draw-id" id="r-draw-id"></p>
       </div>
 
       <div id="r-step-wrong" class="hidden">
@@ -129,6 +131,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=6"></script>
+  <script src="lib.js?v=7"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
