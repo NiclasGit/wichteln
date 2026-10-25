@@ -28,6 +28,7 @@ const MEMES = [
   "https://media.giphy.com/media/WmkqburJqXziM/giphy.gif",
   "https://media.giphy.com/media/LBAv3HJDl2WwU/giphy.gif",
   "https://media.giphy.com/media/11EjiLDatd0syA/giphy.gif",
+  "https://media.giphy.com/media/F3vfdvuM3mCyp7WnQr/giphy.gif",
   "https://media.giphy.com/media/2LbfRQVHs34V1Ru8Pt/giphy.gif",
   "https://media.giphy.com/media/peLaXBwYXthPVQbBne/giphy.gif",
   "https://media.giphy.com/media/KzKHlzSlfHZV44EdTy/giphy.gif",
