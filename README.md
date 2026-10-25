@@ -33,7 +33,7 @@ Das Passwort wird nirgends gespeichert. Vergisst du es, kann niemand die Auslosu
 
 ## GIFs einbauen
 
-Die GIFs stehen in `app.js` in der Liste `MEMES` und werden genau in dieser Reihenfolge gezeigt („Nächstes GIF“ springt eins weiter, am Ende geht's von vorn los). Links, die nicht laden, werden übersprungen.
+Die GIFs stehen in `app.js` in der Liste `MEMES`. Das erste GIF ist bei jedem Öffnen zufällig, danach kommen alle anderen in zufälliger Reihenfolge – jedes GIF kommt erst wieder, wenn alle anderen einmal dran waren. Links, die nicht laden, werden übersprungen.
 
 ```js
 const MEMES = [

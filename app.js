@@ -21,12 +21,14 @@ const TIPS = [
 const ELF_FIRST = ["Zuckerstange", "Glitzer", "Lebkuchen", "Schneeflocke", "Zimtstern", "Glöckchen", "Tannenduft", "Punsch"];
 const ELF_LAST = ["von Nordpol", "Flinkfuß", "Wunderkeks", "Funkelnase", "Klingelbart", "Rentierflüsterer", "Schleifenzauber"];
 
-// Weihnachts-GIFs: werden der Reihe nach gezeigt, kaputte Links übersprungen.
+// Weihnachts-GIFs: zufällige Reihenfolge, jedes kommt einmal dran, bevor sich eins wiederholt.
+// Kaputte Links werden übersprungen.
 // Bild-Links (z.B. https://media.giphy.com/media/<ID>/giphy.gif) oder Dateien aus assets/memes/.
 const MEMES = [
   "https://media.giphy.com/media/WmkqburJqXziM/giphy.gif",
   "https://media.giphy.com/media/LBAv3HJDl2WwU/giphy.gif",
   "https://media.giphy.com/media/11EjiLDatd0syA/giphy.gif",
+  "https://media.giphy.com/media/F3vfdvuM3mCyp7WnQr/giphy.gif",
   "https://media.giphy.com/media/2LbfRQVHs34V1Ru8Pt/giphy.gif",
   "https://media.giphy.com/media/peLaXBwYXthPVQbBne/giphy.gif",
   "https://media.giphy.com/media/KzKHlzSlfHZV44EdTy/giphy.gif",
@@ -319,7 +321,8 @@ function nextTip() {
   $("r-tip").textContent = TIPS[i];
 }
 
-let memeIndex = -1;
+let memeOrder = [];
+let lastMeme = null;
 const brokenMemes = new Set();
 
 function nextMeme() {
@@ -335,10 +338,14 @@ function nextMeme() {
   }
   $("meme-next").classList.toggle("hidden", working.length < 2);
 
-  // Nächstes funktionierendes GIF in Listenreihenfolge, am Ende wieder von vorn
-  do memeIndex = (memeIndex + 1) % MEMES.length;
-  while (brokenMemes.has(MEMES[memeIndex]));
-  const m = MEMES[memeIndex];
+  // Neue zufällige Runde, wenn alle einmal dran waren – ohne das letzte GIF direkt zu wiederholen
+  memeOrder = memeOrder.filter((m) => !brokenMemes.has(m));
+  if (!memeOrder.length) {
+    memeOrder = shuffle(working);
+    if (memeOrder.length > 1 && memeOrder[0] === lastMeme) memeOrder.push(memeOrder.shift());
+  }
+  const m = memeOrder.shift();
+  lastMeme = m;
 
   // Platzhalter, bis das GIF geladen ist
   emoji.textContent = "⏳";
