@@ -91,16 +91,16 @@ button.link { background: none; border: none; color: var(--green); text-decorati
 
 .error { color: var(--red); font-weight: 600; min-height: 1.2em; }
 
-#links { list-style: none; padding: 0; }
-#links li {
+.pairs { list-style: none; padding: 0; }
+.pairs li {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 0;
   border-bottom: 1px dashed #ccc;
 }
-#links .who { flex: 1; font-weight: 600; }
-#links button, #links a {
+.pairs .who { flex: 1; font-weight: 600; }
+.pairs button, .pairs a {
   padding: 6px 10px;
   border-radius: 8px;
   border: 2px solid var(--green);
@@ -110,7 +110,7 @@ button.link { background: none; border: none; color: var(--green); text-decorati
   text-decoration: none;
   white-space: nowrap;
 }
-#links a.wa { border-color: #25a244; color: #25a244; }
+.pairs a.wa { border-color: #25a244; color: #25a244; }
 
 /* Teilnehmer-Ansicht */
 #reveal { text-align: center; }
@@ -168,6 +168,34 @@ button.link { background: none; border: none; color: var(--green); text-decorati
 @media (max-width: 480px) {
   .card { padding: 20px; }
   .row { flex-direction: column; gap: 0; }
-  #links li { flex-wrap: wrap; }
-  #links .who { flex-basis: 100%; }
+  .pairs li { flex-wrap: wrap; }
+  .pairs .who { flex-basis: 100%; }
 }
+
+/* Admin */
+.admin-box {
+  margin-top: 22px;
+  padding: 14px;
+  border: 2px dashed var(--gold);
+  border-radius: 12px;
+  background: #fffaf0;
+}
+.admin-box button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 2px solid var(--red);
+  background: #fff;
+  color: var(--red);
+  font-weight: 600;
+}
+.pairs button.secret {
+  border: none;
+  padding: 2px 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--red);
+  background: #f1e4e2;
+  filter: blur(6px);
+  transition: filter 0.2s;
+}
+.pairs button.secret.shown { filter: none; background: none; }

@@ -39,13 +39,44 @@
         </label>
       </div>
 
+      <label>Admin-Passwort <small>(nur für dich – damit kannst du später die ganze Auslosung sehen)</small>
+        <input id="admin-pw" type="password" autocomplete="new-password" placeholder="Optional, aber empfohlen">
+      </label>
+
       <button id="draw" class="big">🎲 Auslosen!</button>
       <p id="error" class="error"></p>
 
       <div id="results" class="hidden">
         <h2>Die geheimen Links</h2>
         <p class="sub">Schick jedem <strong>nur seinen eigenen</strong> Link. Nicht selbst draufklicken – sonst ist die Überraschung weg! 🙈</p>
-        <ul id="links"></ul>
+        <ul id="links" class="pairs"></ul>
+
+        <div id="admin-link-box" class="admin-box hidden">
+          <strong>🔐 Dein Admin-Link</strong>
+          <p class="sub">Zeigt die komplette Auslosung – aber nur mit deinem Passwort. Gut aufheben (z.B. an dich selbst mailen), das Passwort nicht vergessen!</p>
+          <button id="admin-copy">Admin-Link kopieren</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin: komplette Auslosung -->
+    <section id="admin" class="card hidden">
+      <h1 id="admin-title">🔐 Admin-Bereich</h1>
+      <form id="admin-login">
+        <p>Nur für die Wichtel-Chefin / den Wichtel-Chef. 🎩</p>
+        <label>Passwort
+          <input id="admin-login-pw" type="password" autocomplete="current-password" autofocus>
+        </label>
+        <button class="big" type="submit">Reinlassen</button>
+        <p id="admin-error" class="error"></p>
+      </form>
+
+      <div id="admin-panel" class="hidden">
+        <p class="sub" id="admin-meta"></p>
+        <p>Wer beschenkt wen? Namen antippen zum Aufdecken – so kannst du gezielt nachschauen, ohne dich selbst zu spoilern.</p>
+        <ul id="admin-pairs" class="pairs"></ul>
+        <button id="admin-reveal-all" class="big">👀 Alle aufdecken</button>
+        <p class="sub">Hat jemand seinen Link verloren? Einfach hier nochmal schicken.</p>
       </div>
     </section>
 

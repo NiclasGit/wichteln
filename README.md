@@ -11,6 +11,16 @@ Ein kleines Online-Tool zum Wichteln mit der Familie – ganz ohne Server, Anmel
 
 Die Zuteilung steckt verschlüsselt im Link selbst. Für die Familie reicht das völlig – wer unbedingt schummeln will, könnte es technisch entschlüsseln. Der Organisator sieht die Zuteilung nicht und kann selbst mitmachen.
 
+## 🔐 Admin-Bereich (nur für dich)
+
+Beim Auslosen ein **Admin-Passwort** eintragen. Danach gibt's zusätzlich einen **Admin-Link**:
+
+- Er enthält die komplette Auslosung, verschlüsselt mit deinem Passwort (AES-256-GCM, Schlüssel per PBKDF2 aus dem Passwort abgeleitet) – ohne Passwort ist nichts lesbar.
+- Nach dem Login siehst du, wer wen beschenkt. Die Namen sind verschwommen und werden erst beim Antippen aufgedeckt, damit du dich nicht aus Versehen selbst spoilerst.
+- Hat jemand seinen Link verloren, kannst du ihn dort nochmal verschicken.
+
+Das Passwort wird nirgends gespeichert. Vergisst du es, kann niemand die Auslosung wiederherstellen – auch du nicht.
+
 ## Extras
 
 - Familienfoto als Hintergrund

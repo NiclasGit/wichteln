@@ -81,7 +81,7 @@ function initSetup() {
     for (const f of ["title", "names", "exclusions", "budget", "date"]) if (saved[f]) $(f).value = saved[f];
   } catch {}
 
-  $("draw").addEventListener("click", () => {
+  $("draw").addEventListener("click", async () => {
     $("error").textContent = "";
     const values = {};
     for (const f of ["title", "names", "exclusions", "budget", "date"]) values[f] = $(f).value.trim();
@@ -98,6 +98,7 @@ function initSetup() {
     if (!pairs) return showError("Mit diesen Ausschlüssen geht's leider nicht auf. Lockert die Regeln ein bisschen!");
 
     renderLinks(pairs, values);
+    await renderAdminLink(pairs, values, $("admin-pw").value);
     shuffleAnimation();
   });
 }
@@ -107,37 +108,129 @@ function showError(msg) {
   $("results").classList.add("hidden");
 }
 
-function renderLinks(pairs, values) {
+function participantUrl(giver, receiver, values) {
   const base = location.href.split("#")[0];
+  return `${base}#z=${encode({ n: giver, t: receiver, ti: values.title, b: values.budget, d: values.date })}`;
+}
+
+function shareButtons(giver, url) {
+  const msg = `Hallo ${giver}! 🎅 Hier ist dein geheimer Wichtel-Zettel: ${url}`;
+
+  const copy = document.createElement("button");
+  copy.textContent = "Link kopieren";
+  copy.addEventListener("click", () => copyText(url, copy));
+
+  const wa = document.createElement("a");
+  wa.className = "wa";
+  wa.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  wa.target = "_blank";
+  wa.rel = "noopener";
+  wa.textContent = "WhatsApp";
+  return [copy, wa];
+}
+
+async function copyText(text, btn) {
+  try { await navigator.clipboard.writeText(text); btn.textContent = "Kopiert ✓"; }
+  catch { prompt("Link kopieren:", text); }
+}
+
+function renderLinks(pairs, values) {
   const list = $("links");
   list.innerHTML = "";
   for (const [giver, receiver] of pairs) {
-    const url = `${base}#z=${encode({ n: giver, t: receiver, ti: values.title, b: values.budget, d: values.date })}`;
-    const msg = `Hallo ${giver}! 🎅 Hier ist dein geheimer Wichtel-Zettel: ${url}`;
-
     const li = document.createElement("li");
     const who = document.createElement("span");
     who.className = "who";
     who.textContent = `🎁 ${giver}`;
-
-    const copy = document.createElement("button");
-    copy.textContent = "Link kopieren";
-    copy.addEventListener("click", async () => {
-      try { await navigator.clipboard.writeText(url); copy.textContent = "Kopiert ✓"; }
-      catch { prompt("Link kopieren:", url); }
-    });
-
-    const wa = document.createElement("a");
-    wa.className = "wa";
-    wa.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-    wa.target = "_blank";
-    wa.rel = "noopener";
-    wa.textContent = "WhatsApp";
-
-    li.append(who, copy, wa);
+    li.append(who, ...shareButtons(giver, participantUrl(giver, receiver, values)));
     list.append(li);
   }
   $("results").classList.remove("hidden");
+}
+
+// ---------- Admin-Link: komplette Auslosung, mit Passwort verschlüsselt ----------
+
+const b64url = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const unb64url = (str) => Uint8Array.from(atob(str.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+
+async function deriveKey(password, salt) {
+  const material = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt, iterations: 200000, hash: "SHA-256" },
+    material, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"],
+  );
+}
+
+async function encryptAdmin(data, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveKey(password, salt);
+  const cipher = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(JSON.stringify(data))));
+  return b64url(new Uint8Array([...salt, ...iv, ...cipher]));
+}
+
+async function decryptAdmin(str, password) {
+  const bytes = unb64url(str);
+  const key = await deriveKey(password, bytes.slice(0, 16));
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: bytes.slice(16, 28) }, key, bytes.slice(28));
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+
+async function renderAdminLink(pairs, values, password) {
+  const box = $("admin-link-box");
+  if (!password) return box.classList.add("hidden");
+  const data = { p: pairs, ti: values.title, b: values.budget, d: values.date, at: new Date().toISOString() };
+  const url = `${location.href.split("#")[0]}#admin=${await encryptAdmin(data, password)}`;
+  const btn = $("admin-copy");
+  btn.textContent = "Admin-Link kopieren";
+  btn.onclick = () => copyText(url, btn);
+  box.classList.remove("hidden");
+}
+
+function initAdmin(blob) {
+  $("admin").classList.remove("hidden");
+  $("admin-login").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    let data;
+    try { data = await decryptAdmin(blob, $("admin-login-pw").value); }
+    catch { $("admin-error").textContent = "Falsches Passwort – netter Versuch! 😏"; return; }
+    $("admin-login").classList.add("hidden");
+    renderAdminPanel(data);
+  });
+}
+
+function renderAdminPanel(data) {
+  if (data.ti) $("admin-title").textContent = `🔐 ${data.ti}`;
+  const meta = [`${data.p.length} Personen`];
+  if (data.b) meta.push(`Budget ${data.b}`);
+  if (data.d) meta.push(`Bescherung ${new Date(data.d + "T00:00:00").toLocaleDateString("de-DE")}`);
+  meta.push(`ausgelost am ${new Date(data.at).toLocaleString("de-DE")}`);
+  $("admin-meta").textContent = meta.join(" · ");
+
+  const list = $("admin-pairs");
+  list.innerHTML = "";
+  for (const [giver, receiver] of data.p) {
+    const li = document.createElement("li");
+    const who = document.createElement("span");
+    who.className = "who";
+    who.append(`${giver} → `);
+    const secret = document.createElement("button");
+    secret.className = "secret";
+    secret.title = "Antippen zum Aufdecken";
+    secret.textContent = receiver;
+    secret.addEventListener("click", () => secret.classList.toggle("shown"));
+    who.append(secret);
+    li.append(who, ...shareButtons(giver, participantUrl(giver, receiver, { title: data.ti, budget: data.b, date: data.d })));
+    list.append(li);
+  }
+
+  $("admin-reveal-all").addEventListener("click", () => {
+    const secrets = list.querySelectorAll(".secret");
+    const show = [...secrets].some((s) => !s.classList.contains("shown"));
+    secrets.forEach((s) => s.classList.toggle("shown", show));
+    $("admin-reveal-all").textContent = show ? "🙈 Alle wieder verstecken" : "👀 Alle aufdecken";
+  });
+  $("admin-panel").classList.remove("hidden");
 }
 
 function shuffleAnimation() {
@@ -281,7 +374,10 @@ function confetti() {
 
 snow();
 const match = location.hash.match(/z=([\w-]+)/);
-if (match) {
+const adminMatch = location.hash.match(/admin=([\w-]+)/);
+if (adminMatch) {
+  initAdmin(adminMatch[1]);
+} else if (match) {
   try { initReveal(decode(match[1])); }
   catch { document.body.insertAdjacentHTML("beforeend", "<p class='card' style='margin:20px auto'>Dieser Link ist leider kaputt. 🥲 Frag nochmal nach.</p>"); }
 } else {
