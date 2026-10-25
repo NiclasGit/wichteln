@@ -4,7 +4,7 @@ Ein kleines Online-Tool zum Wichteln mit der Familie – ganz ohne Server, Anmel
 
 ## So funktioniert's
 
-1. Seite öffnen, alle Namen eintragen (optional: Paare, die sich nicht ziehen sollen, Budget, Datum der Bescherung).
+1. Seite öffnen, alle Namen eintragen (optional: Paare, die sich nicht ziehen sollen, feste Paare wie „Oma -> Tim“, Budget, Datum der Bescherung).
 2. **Auslosen** klicken.
 3. Jede Person bekommt ihren **eigenen geheimen Link** (per „Link kopieren“ oder direkt per WhatsApp).
 4. Wer den Link öffnet, muss schwören, dass er es wirklich ist 🤞, das Päckchen ein paar Mal schütteln – und sieht dann, wen er beschenkt. Mit Konfetti. 🎉

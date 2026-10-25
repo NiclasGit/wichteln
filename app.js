@@ -76,11 +76,40 @@ function parseExclusions(text, names) {
   return pairs;
 }
 
-function draw(names, excluded) {
+function parseFixed(text, names, excluded) {
+  const fixed = new Map();
+  const taken = new Set();
+  for (const line of text.split("\n")) {
+    if (!line.trim()) continue;
+    const parts = line.split(/\s*(?:->|→|=>|>)\s*/).map((s) => s.trim());
+    if (parts.length !== 2 || !parts[0] || !parts[1]) throw new Error(`„${line.trim()}“ verstehe ich nicht – bitte so schreiben: „Oma -> Tim“.`);
+    const [giver, receiver] = parts;
+    for (const p of parts) {
+      if (!names.includes(p)) throw new Error(`„${p}“ steht nicht in der Teilnehmerliste.`);
+    }
+    if (giver === receiver) throw new Error(`${giver} kann sich nicht selbst beschenken. 😄`);
+    if (fixed.has(giver)) throw new Error(`${giver} ist bei den festen Paaren doppelt als Schenker eingetragen.`);
+    if (taken.has(receiver)) throw new Error(`${receiver} wird bei den festen Paaren von zwei Leuten beschenkt.`);
+    if (excluded.has(giver + "\u0000" + receiver)) throw new Error(`${giver} -> ${receiver} ist gleichzeitig fest und ausgeschlossen.`);
+    fixed.set(giver, receiver);
+    taken.add(receiver);
+  }
+  return fixed;
+}
+
+function draw(names, excluded, fixed) {
+  // Feste Paare stehen, der Rest wird unter den übrigen Leuten ausgelost
+  const freeGivers = names.filter((n) => !fixed.has(n));
+  const taken = new Set(fixed.values());
+  const freeReceivers = names.filter((n) => !taken.has(n));
   for (let attempt = 0; attempt < 10000; attempt++) {
-    const receivers = shuffle(names);
-    const ok = names.every((giver, i) => giver !== receivers[i] && !excluded.has(giver + "\u0000" + receivers[i]));
-    if (ok) return names.map((giver, i) => [giver, receivers[i]]);
+    const receivers = shuffle(freeReceivers);
+    const ok = freeGivers.every((giver, i) => giver !== receivers[i] && !excluded.has(giver + "\u0000" + receivers[i]));
+    if (ok) {
+      const result = new Map(fixed);
+      freeGivers.forEach((giver, i) => result.set(giver, receivers[i]));
+      return names.map((giver) => [giver, result.get(giver)]);
+    }
   }
   return null;
 }
@@ -92,24 +121,26 @@ function initSetup() {
 
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE) || "{}");
-    for (const f of ["title", "names", "exclusions", "budget", "date"]) if (saved[f]) $(f).value = saved[f];
+    for (const f of ["title", "names", "exclusions", "fixed", "budget", "date"]) if (saved[f]) $(f).value = saved[f];
   } catch {}
 
   $("draw").addEventListener("click", async () => {
     $("error").textContent = "";
     const values = {};
-    for (const f of ["title", "names", "exclusions", "budget", "date"]) values[f] = $(f).value.trim();
+    for (const f of ["title", "names", "exclusions", "fixed", "budget", "date"]) values[f] = $(f).value.trim();
     try { localStorage.setItem(STORAGE, JSON.stringify(values)); } catch {}
 
     const names = [...new Set(values.names.split("\n").map((s) => s.trim()).filter(Boolean))];
     if (names.length < 3) return showError("Mindestens 3 Leute, sonst ist's kein richtiges Wichteln. 😉");
 
-    let excluded;
-    try { excluded = parseExclusions(values.exclusions, names); }
-    catch (e) { return showError(e.message); }
+    let excluded, fixed;
+    try {
+      excluded = parseExclusions(values.exclusions, names);
+      fixed = parseFixed(values.fixed, names, excluded);
+    } catch (e) { return showError(e.message); }
 
-    const pairs = draw(names, excluded);
-    if (!pairs) return showError("Mit diesen Ausschlüssen geht's leider nicht auf. Lockert die Regeln ein bisschen!");
+    const pairs = draw(names, excluded, fixed);
+    if (!pairs) return showError("Mit diesen Regeln geht's leider nicht auf. Lockert die Ausschlüsse oder festen Paare ein bisschen!");
 
     renderLinks(pairs, values);
     await renderAdminLink(pairs, values, $("admin-pw").value);

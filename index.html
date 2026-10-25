@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Familien-Wichteln 🎁</title>
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
 </head>
 <body>
@@ -28,6 +28,10 @@
 
       <label>Wer soll sich <em>nicht</em> gegenseitig ziehen? <small>(optional, z.B. Paare – „Mama - Papa“, ein Paar pro Zeile)</small>
         <textarea id="exclusions" rows="3" placeholder="Mama - Papa"></textarea>
+      </label>
+
+      <label>Wer soll <em>fest</em> wen beschenken? <small>(optional, „Schenker -> Beschenkter“, ein Paar pro Zeile – der Rest wird ganz normal ausgelost)</small>
+        <textarea id="fixed" rows="3" placeholder="Oma -> Tim"></textarea>
       </label>
 
       <div class="row">
@@ -111,11 +115,11 @@
         </div>
         <p class="sub" id="r-elf"></p>
 
+        <button id="meme-next" class="meme-btn">😂 Hier klicken für den nächsten Weihnachts-Lacher!</button>
         <figure id="meme" class="meme">
           <img id="meme-img" class="hidden" alt="Weihnachts-Meme" referrerpolicy="no-referrer">
           <div id="meme-emoji" class="meme-emoji"></div>
         </figure>
-        <button id="meme-next" class="meme-btn">😂 Hier klicken für den nächsten Weihnachts-Lacher!</button>
       </div>
 
       <div id="r-step-wrong" class="hidden">
@@ -125,6 +129,6 @@
     </section>
   </main>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

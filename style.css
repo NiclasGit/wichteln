@@ -168,7 +168,7 @@ button.link { background: none; border: none; color: var(--green); text-decorati
 /* Memes */
 .meme {
   position: relative;
-  margin: 22px auto 8px;
+  margin: 12px auto 0;
   max-width: 380px;
   aspect-ratio: 1;
   border-radius: 14px;
@@ -188,7 +188,7 @@ button.link { background: none; border: none; color: var(--green); text-decorati
 }
 
 .meme-btn {
-  margin-top: 6px;
+  margin-top: 16px;
   padding: 12px 20px;
   font-size: 1.05rem;
   font-weight: 700;
