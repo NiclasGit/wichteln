@@ -12,14 +12,18 @@ try { ({ chromium } = require("playwright")); } catch {}
 const PAGE = pathToFileURL(path.join(__dirname, "..", "index.html")).href;
 const PASSWORD = "geheim123";
 
-async function drawInBrowser(page) {
+// Wartet, bis die neue Auslosung wirklich angezeigt wird (neuer Code), statt auf Zustände,
+// die von der vorherigen Runde noch sichtbar sein können
+async function drawInBrowser(page, previousId) {
   await page.click("#draw");
-  await page.waitForSelector("#admin-link-box:not(.hidden)");
-  await page.waitForFunction(() => document.getElementById("draw").textContent.includes("Nochmal"));
-  const links = await page.$$eval("#links a.wa", (as) => as.map((a) => decodeURIComponent(a.href).match(/(file:\S+)/)[1]));
-  await page.click("#admin-copy");
-  const adminUrl = await page.evaluate(() => navigator.clipboard.readText());
+  await page.waitForFunction((prev) => {
+    const id = document.getElementById("draw-id").textContent;
+    return id && id !== prev && !document.getElementById("results").classList.contains("hidden");
+  }, previousId);
   const id = await page.textContent("#draw-id");
+  const links = await page.$$eval("#links a.wa", (as) => as.map((a) => decodeURIComponent(a.href).match(/(file:\S+)/)[1]));
+  // Admin-Link direkt vom Button lesen statt über die Zwischenablage (die braucht Fensterfokus)
+  const adminUrl = await page.getAttribute("#admin-copy", "data-url");
   return { links, adminUrl, id };
 }
 
@@ -56,7 +60,7 @@ test("Im Browser: Zettel und Admin-Bereich zeigen dieselbe Auslosung – auch na
   { skip: !chromium && "playwright ist nicht installiert" }, async () => {
     const browser = await chromium.launch();
     try {
-      const context = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
+      const context = await browser.newContext();
       await context.route(/^https?:/, (route) => route.abort());
       const page = await context.newPage();
       await page.goto(PAGE);
@@ -65,8 +69,10 @@ test("Im Browser: Zettel und Admin-Bereich zeigen dieselbe Auslosung – auch na
       await page.fill("#fixed", "Oma -> Tim");
       await page.fill("#admin-pw", PASSWORD);
 
+      let previousId = "";
       for (let round = 0; round < 2; round++) {
-        const { links, adminUrl, id } = await drawInBrowser(page);
+        const { links, adminUrl, id } = await drawInBrowser(page, previousId);
+        previousId = id;
         const revealed = await revealAll(context, links);
         const admin = await readAdmin(context, adminUrl);
 

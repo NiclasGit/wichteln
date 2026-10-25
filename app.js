@@ -50,9 +50,13 @@ function initSetup() {
     for (const f of ["title", "names", "exclusions", "fixed", "budget", "date"]) values[f] = $(f).value.trim();
     try { localStorage.setItem(STORAGE, JSON.stringify(values)); } catch {}
 
+    // Alte Links ausblenden, solange neu ausgelost wird – sonst könnte man noch einen alten kopieren
+    $("results").classList.add("hidden");
+    $("draw").disabled = true;
     let result;
     try { result = await createDraw(values, $("admin-pw").value, location.href.split("#")[0]); }
     catch (e) { return showError(e.message); }
+    finally { $("draw").disabled = false; }
 
     renderLinks(result.links, result.id);
     renderAdminLink(result.adminUrl);
@@ -107,6 +111,7 @@ function renderAdminLink(url) {
   const box = $("admin-link-box");
   if (!url) return box.classList.add("hidden");
   const btn = $("admin-copy");
+  btn.dataset.url = url;
   btn.textContent = "Admin-Link kopieren";
   btn.onclick = () => copyText(url, btn);
   box.classList.remove("hidden");
