@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Familien-Wichteln 🎁</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+</head>
+<body>
+  <div class="bg"></div>
+  <canvas id="snow"></canvas>
+  <canvas id="confetti"></canvas>
+
+  <main>
+    <!-- Organisator: Einrichten & Auslosen -->
+    <section id="setup" class="card hidden">
+      <h1>🎄 Familien-Wichteln</h1>
+      <p class="sub">Namen eintragen, auslosen, jedem seinen geheimen Link schicken. Fertig!</p>
+
+      <label>Name der Runde
+        <input id="title" placeholder="Wichteln 2026 bei Oma & Opa">
+      </label>
+
+      <label>Wer macht mit? <small>(ein Name pro Zeile)</small>
+        <textarea id="names" rows="7" placeholder="Oma&#10;Opa&#10;Mama&#10;Papa&#10;Lena&#10;Tim"></textarea>
+      </label>
+
+      <label>Wer soll sich <em>nicht</em> gegenseitig ziehen? <small>(optional, z.B. Paare – „Mama - Papa“, ein Paar pro Zeile)</small>
+        <textarea id="exclusions" rows="3" placeholder="Mama - Papa"></textarea>
+      </label>
+
+      <div class="row">
+        <label>Budget
+          <input id="budget" placeholder="ca. 30 €">
+        </label>
+        <label>Bescherung
+          <input id="date" type="date">
+        </label>
+      </div>
+
+      <button id="draw" class="big">🎲 Auslosen!</button>
+      <p id="error" class="error"></p>
+
+      <div id="results" class="hidden">
+        <h2>Die geheimen Links</h2>
+        <p class="sub">Schick jedem <strong>nur seinen eigenen</strong> Link. Nicht selbst draufklicken – sonst ist die Überraschung weg! 🙈</p>
+        <ul id="links"></ul>
+      </div>
+    </section>
+
+    <!-- Teilnehmer: Zettel ziehen -->
+    <section id="reveal" class="card hidden">
+      <h1 id="r-title">🎄 Wichteln</h1>
+
+      <div id="r-step-confirm">
+        <p class="big-text">Hallo <strong id="r-name"></strong>! 👋</p>
+        <p>Bevor's losgeht: Bist du das wirklich?</p>
+        <button id="r-yes" class="big"></button>
+        <p><button id="r-no" class="link">Nö, ich bin's nicht 🙈</button></p>
+      </div>
+
+      <div id="r-step-gift" class="hidden">
+        <p>Dein Zettel liegt im Päckchen. Tipp drauf!</p>
+        <button id="gift" aria-label="Päckchen öffnen">🎁</button>
+        <p id="gift-hint" class="sub"></p>
+      </div>
+
+      <div id="r-step-result" class="hidden">
+        <p>Du beschenkst dieses Jahr …</p>
+        <p class="target" id="r-target"></p>
+        <p class="sub">Psst … nicht verraten! 🤫</p>
+        <div class="facts">
+          <div id="r-budget" class="fact hidden"></div>
+          <div id="r-countdown" class="fact hidden"></div>
+        </div>
+        <div class="tip">
+          <strong>💡 Wichtel-Tipp:</strong> <span id="r-tip"></span>
+          <button id="r-tip-next" class="link">noch einer</button>
+        </div>
+        <p class="sub" id="r-elf"></p>
+      </div>
+
+      <div id="r-step-wrong" class="hidden">
+        <p class="big-text">Dann aber schnell weg hier! 🏃💨</p>
+        <p>Dieser Link gehört <strong id="r-name2"></strong>. Der Weihnachtsmann sieht alles. 🎅👀</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
