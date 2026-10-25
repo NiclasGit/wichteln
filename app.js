@@ -21,6 +21,33 @@ const TIPS = [
 const ELF_FIRST = ["Zuckerstange", "Glitzer", "Lebkuchen", "Schneeflocke", "Zimtstern", "Glöckchen", "Tannenduft", "Punsch"];
 const ELF_LAST = ["von Nordpol", "Flinkfuß", "Wunderkeks", "Funkelnase", "Klingelbart", "Rentierflüsterer", "Schleifenzauber"];
 
+// Weihnachts-Memes: Emoji als „Bild“ + klassischer Text oben/unten
+const MEMES = [
+  { e: "🎅", top: "Wenn du siehst, wen du gezogen hast", bottom: "…und das Budget nur 30 € ist" },
+  { e: "🦌", top: "Rudolph, als jemand fragt", bottom: "„Warum ist deine Nase so rot?“ – Glühwein." },
+  { e: "🧦", top: "Ich: wünscht sich nichts", bottom: "Die Familie: 7 Paar Socken" },
+  { e: "🎁", top: "Das Geschenk", bottom: "Die Verpackung, die 3 Stunden gedauert hat" },
+  { e: "🍪", top: "Plätzchen für den Weihnachtsmann", bottom: "Papa um 23:58 Uhr" },
+  { e: "😐", top: "„Oh… Socken.“", bottom: "„Wie schön, danke!“" },
+  { e: "🎄", top: "Der Baum am 1. Advent", bottom: "Der Baum am 6. Januar 🍂" },
+  { e: "🛒", top: "Ich am 1. Dezember: „Dieses Jahr bin ich früh dran“", bottom: "Ich am 23. Dezember:" },
+  { e: "🕵️", top: "Wenn jemand fragt, wen du gezogen hast", bottom: "Ich weiß von nichts." },
+  { e: "🎶", top: "Last Christmas im Radio", bottom: "zum 47. Mal heute" },
+  { e: "🥔", top: "Kartoffelsalat mit Würstchen", bottom: "Das wahre Weihnachtswunder" },
+  { e: "🧝", top: "Der Wichtel, als er merkt", bottom: "dass Gutscheine auch Geschenke sind" },
+  { e: "📏", top: "Geschenk für 30 € gekauft", bottom: "Kassenzettel: 29,99 €. Präzision." },
+  { e: "🌟", top: "Die Lichterkette nach 11 Monaten im Keller", bottom: "Knoten-Level: unmöglich" },
+  { e: "😴", top: "Nach dem Weihnachtsessen", bottom: "Mein Bauch: Feierabend" },
+  { e: "🎩", top: "Opa beim Auspacken", bottom: "„Das Papier heben wir auf!“" },
+  { e: "⛄", top: "Weiße Weihnachten?", bottom: "Deutschland: 12 °C und Nieselregen" },
+  { e: "🤫", top: "Mein Gesicht, wenn mein Wichtel neben mir sitzt", bottom: "und ich nichts verrate" },
+];
+
+// Eigene Meme-Bilder: Dateien nach assets/memes/ legen und hier eintragen
+const OWN_MEMES = [
+  // "assets/memes/opa-mit-muetze.jpg",
+];
+
 // ---------- Kodierung der Links ----------
 
 function encode(obj) {
@@ -276,11 +303,13 @@ function initReveal(data) {
     renderCountdown(data.d);
     nextTip();
     $("r-elf").textContent = `Dein Wichtelname: ${pick(ELF_FIRST)} ${pick(ELF_LAST)} 🧝`;
+    nextMeme();
     show("result");
     confetti();
   });
 
   $("r-tip-next").addEventListener("click", nextTip);
+  $("meme-next").addEventListener("click", nextMeme);
 }
 
 function renderCountdown(date) {
@@ -303,6 +332,32 @@ function nextTip() {
   do { i = Math.floor(Math.random() * TIPS.length); } while (i === lastTip);
   lastTip = i;
   $("r-tip").textContent = TIPS[i];
+}
+
+let memeDeck = [];
+function nextMeme() {
+  // Gemischter Stapel, damit sich nichts wiederholt, bis alle durch sind
+  if (!memeDeck.length) memeDeck = shuffle([...MEMES, ...OWN_MEMES]);
+  const m = memeDeck.pop();
+  const img = $("meme-img");
+  const emoji = $("meme-emoji");
+  if (typeof m === "string") {
+    img.src = m;
+    img.classList.remove("hidden");
+    emoji.classList.add("hidden");
+    $("meme-top").textContent = "";
+    $("meme-bottom").textContent = "";
+  } else {
+    img.classList.add("hidden");
+    emoji.classList.remove("hidden");
+    emoji.textContent = m.e;
+    $("meme-top").textContent = m.top;
+    $("meme-bottom").textContent = m.bottom;
+  }
+  const card = $("meme");
+  card.classList.remove("flip");
+  void card.offsetWidth;
+  card.classList.add("flip");
 }
 
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];

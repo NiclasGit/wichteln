@@ -29,6 +29,19 @@ Das Passwort wird nirgends gespeichert. Vergisst du es, kann niemand die Auslosu
 - „Bist du's wirklich?“-Abfrage gegen versehentliches Spicken
 - Countdown bis zur Bescherung & Budget-Anzeige
 - Zufällige Wichtel-Tipps und ein persönlicher Wichtelname 🧝
+- Weihnachts-Memes zum Durchklicken 🦌
+
+## Eigene Memes einbauen
+
+Bilder nach `assets/memes/` hochladen und in `app.js` in die Liste `OWN_MEMES` eintragen, z.B.:
+
+```js
+const OWN_MEMES = [
+  "assets/memes/opa-mit-muetze.jpg",
+];
+```
+
+Sie werden dann zufällig zwischen die eingebauten Memes gemischt. Neue Sprüche für die eingebauten Memes kommen in die Liste `MEMES`.
 
 ## Familienfoto einbauen
 

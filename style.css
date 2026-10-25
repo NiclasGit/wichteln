@@ -165,6 +165,44 @@ button.link { background: none; border: none; color: var(--green); text-decorati
 }
 .tip button { margin-left: 4px; font-size: 0.85rem; }
 
+/* Memes */
+.meme {
+  position: relative;
+  margin: 22px auto 8px;
+  max-width: 380px;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 45%, #2e7d5b, #123d2b);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+.meme.flip { animation: flip 0.45s ease-out; }
+@keyframes flip { from { transform: rotateY(90deg) scale(0.9); } to { transform: none; } }
+.meme img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.meme-emoji {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 9rem;
+}
+.meme-text {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  margin: 0;
+  font-family: Impact, "Anton", "Arial Black", sans-serif;
+  font-size: clamp(1.1rem, 5vw, 1.5rem);
+  line-height: 1.15;
+  text-transform: uppercase;
+  color: #fff;
+  -webkit-text-stroke: 1.5px #000;
+  paint-order: stroke fill;
+  text-shadow: 2px 2px 0 #000;
+}
+.meme-text.top { top: 12px; }
+.meme-text.bottom { bottom: 12px; }
+
 @media (max-width: 480px) {
   .card { padding: 20px; }
   .row { flex-direction: column; gap: 0; }
